@@ -1,0 +1,13 @@
+Notes VideoSorter
+
+VideoSorter fungerar med .mkv .m4v .avi .mp4 ytterligare filformat kan läggas till direkt i koden på rad 34 i klassen FileManager.
+
+VideoSorter har en känd grafikbugg i låtarnas genre men detta är endast en grafisk bugg. De val som görs i kolumnerna är de enda som 
+ändras. 
+
+Inmatad metadata sparas under körning som attribuit för video/metadataobjekten och sparas till fil först när programmet termineras.
+
+Uppdatering av programmets genres slår inte igenom omedelbart utan kräver en omstart av programmet. 
+
+Mellanslag i operander ska represetentaeras av _ . 
+

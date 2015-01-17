@@ -11,6 +11,10 @@ public abstract class Video {
 	protected String name;
 	protected MetaData metaData;
 	
+	/**
+	 * Konstruktör för Video. Tar en sökväg till en video och skapar ny metadata för videon.
+	 * @param path Sökvägen till videon.
+	 */
 	public Video(Path path){
 		this.path = path;
 		this.name = getFileName();
@@ -18,20 +22,34 @@ public abstract class Video {
 		updateMetaData();
 	}
 	
+	/**
+	 * Returnerar sökvägen för videon.
+	 * @return Sökvägen för videon.
+	 */
 	public Path getPath(){
 		return path;
 	}
 	
+	/**
+	 * Returnerar videons metadata.
+	 * @return Videons metadata.
+	 */
 	public MetaData getMetaData(){
 		return this.metaData;
 	}
 	
+	/**
+	 * Returnerar filens namn.
+	 * @return Filens namn.
+	 */
 	private String getFileName(){
-		
 		return path.getFileName().toString();
-		 
 	}
 	
+	
+	/**
+	 * Uppdaterar videons metadata. Om en fil/mapp för metadatan inte finns så skapas denna.
+	 */
 	private void updateMetaData(){
 		File metaDataDirectory = new File(Paths.get("metadata").toString());
 		

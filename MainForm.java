@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 import java.util.Vector;
 
 import javax.swing.*;
@@ -47,9 +48,13 @@ public class MainForm extends JFrame{
 
 	private FileManager fileManager;
 	private SearchStringInterpreter interpreter;
-
+	
 	public static List<String> genres;
 
+	/**
+	 * Konstruktör för MainForm.
+	 * @param path Sökvägen för filer som skall sorteras.
+	 */
 	public MainForm(String path){
 
 		fileManager = new FileManager(path);
@@ -57,46 +62,49 @@ public class MainForm extends JFrame{
 		currentVideos = new LinkedList<Video>();
 		genres = new LinkedList<String>();
 		fileManager.loadVideos();
-
+		
 		loadGenres();
 
 		setTitle("Projekt");
 		setLayout(null);
 		setSize(1200, 768);
 		setResizable(false);
-
+		
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		initUI();
 	}
-
+	
+	/**
+	 * Laddar de specifierade genrer. Om en genres fil inte finns skapas denna och fördefinerade genrer läggs till.
+	 */
 	private void loadGenres(){
-
+		
 		File genreList = new File(Paths.get("genres.txt").toString());
 		if(genreList.exists()){
 			Vector<String> genres1 = new Vector<String>();
-
+			
 			try{
-				BufferedReader reader = new BufferedReader(new FileReader(genreList)); 
+				BufferedReader reader = new BufferedReader(new FileReader(genreList));	
 				String a;
 				while ((a = reader.readLine()) != null) {
-					genres1.add(a);
+				genres1.add(a);
 				}
 				reader.close();
 			} catch(IOException ex){
-				// TODO Felhantering!
+				// TODO Felhantering! 
 			}
-
+			
 			for (int i = 0; i < genres1.size(); i++){
 				addGenre(genres1.get(i));
 			}
-
-
+		
+			
 		}else {
 			try{
 				BufferedWriter writer = new BufferedWriter(new FileWriter(genreList));
-
+				
 				writer.write("Ospecificerad");
 				writer.newLine();
 				writer.write("Action");
@@ -115,32 +123,43 @@ public class MainForm extends JFrame{
 				writer.newLine();
 				writer.write("Serie");
 				writer.newLine();
-
+				
 				writer.close();
-
+				
 			} catch(IOException ex){
-
+				
 			}
 			loadGenres();
 		}
 	}
-
+	
+	/**
+	 * Lägger till en ny genre.
+	 * @param genre Genre som skall läggas till.
+	 */
 	public static void addGenre(String genre){
 		for (int i = 0; i < genres.size(); i++){
 			if (genre.toLowerCase().equals(genres.get(i).toLowerCase())){
 				return;
 			}
 		}
-
+		
 		genres.add(genre);
 		updateGenres();
 	}
-
+	
+	/**
+	 * Tar bort en genre.
+	 * @param genre Genre som skall tas bort.
+	 */
 	public static void eraseGenre(String genre){
 		genres.remove(genre);
 		updateGenres();
 	}
-
+	
+	/**
+	 * Sparar ner genrer till fil.
+	 */
 	private void saveGenres(){
 		File genreList = new File(Paths.get("genres.txt").toString());
 		try{
@@ -151,25 +170,36 @@ public class MainForm extends JFrame{
 			}
 			writer.close();
 		} catch(IOException ex){
-
+			
 		}
 	}
-
+	
+	/**
+	 * Dummy metod som uppdaterar comboboxens innehåll. (Funkar ibland)
+	 */
 	private static void updateGenres(){
 		comboBoxRenderer = new MyComboBoxRenderer(listToArray(genres));
 		comboBoxEditor = new MyComboBoxEditor(listToArray(genres));
 	}
-
+	
+	/**
+	 * Konverterar en List<String> till String[].
+	 * @param list Listan som skall konverteras.
+	 * @return String[] som har blivit konverterad.
+	 */
 	private static String[] listToArray(List<String> list){
 		String[] arr = new String[list.size()];
 		for (int i = 0; i < list.size(); i++){
-
+			
 			arr[i] = list.get(i);
 		}
-
+		
 		return arr;
 	}
-
+	
+	/**
+	 * Uppdaterar metadata objekten beroende på vad som har ändrats i tabellen.
+	 */
 	private void updateVideos(){
 		for (Video v : fileManager.getVideos()){
 			MetaData md = v.getMetaData();
@@ -199,6 +229,9 @@ public class MainForm extends JFrame{
 	}
 
 
+	/**
+	 * Uppdaterar listan efter valda sökkriterier.
+	 */
 	private void updateList(){
 		while(mainTableModel.getRowCount() > 0)
 			mainTableModel.removeRow(0);
@@ -208,22 +241,22 @@ public class MainForm extends JFrame{
 			result = interpreter.interpretString(titelSearch.getText(), fileManager.getVideos(), "Title");
 		}
 		if (!genreSearch.getText().isEmpty()){
-
+			
 			result = interpreter.interpretString(genreSearch.getText(), result.isEmpty() ? fileManager.getVideos() : result, "Genre");
 		}
 		if (!directorSearch.getText().isEmpty()){
-
+			
 			result = interpreter.interpretString(directorSearch.getText(), result.isEmpty() ? fileManager.getVideos() : result, "Director");
 		}
 		if (!yearSearch.getText().isEmpty()){
-
+			
 			result = interpreter.interpretString(yearSearch.getText(), result.isEmpty() ? fileManager.getVideos() : result, "Year");
 		}
 		if (!ratingSearch.getText().isEmpty()){
-
+			
 			result = interpreter.interpretString(ratingSearch.getText(), result.isEmpty() ? fileManager.getVideos() : result, "Rating");
 		}
-
+		
 		if (titelSearch.getText().isEmpty() && genreSearch.getText().isEmpty() && directorSearch.getText().isEmpty() && yearSearch.getText().isEmpty() && ratingSearch.getText().isEmpty()){
 			for (Video v : fileManager.getVideos()){
 				MetaData md = v.getMetaData();
@@ -239,10 +272,13 @@ public class MainForm extends JFrame{
 		}
 	}
 
+	/**
+	 * Initierar grafiska gränssnittet.
+	 */
 	private void initUI(){
-
+		
 		final int originY = 10;
-
+	
 		labels = new HashMap<String, JLabel>();
 		mainTableModel = new DefaultTableModel(0,0);
 		mainTable = new JTable();
@@ -259,20 +295,19 @@ public class MainForm extends JFrame{
 		exitButton = new JButton();
 		stringSearch = new JTextField();
 		menuBar = new JMenuBar();
-
+		
 
 		arkivMenu = new JMenu("Arkiv");
-
+		
 		JMenuItem addGenreMenu = new JMenuItem("Lägg till genre..");
 		addGenreMenu.addActionListener(new ActionListener(){
 
-			@SuppressWarnings("deprecation")
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				new GenreForm(null, "Hantera genres").show();
-
+				
 			}
-
+			
 		});
 		arkivMenu.add(addGenreMenu);
 
@@ -282,24 +317,24 @@ public class MainForm extends JFrame{
 		labels.put("year_label", new JLabel());
 		labels.put("rating_label", new JLabel());
 		labels.put("string_label", new JLabel());
-
+		
 
 		mainTableModel.setColumnIdentifiers(new String[]{"Titel", "Regissör", "Genre", "År", "Betyg 1-5", "Sökväg" });
 		mainTable.setModel(mainTableModel);
 		mainTableScroll.setSize(800, 690);
 		mainTableScroll.setLocation(20, originY);
-
+		
 		menuBar.add(arkivMenu);
-
+		
 		comboBoxRenderer = new MyComboBoxRenderer(listToArray(genres));
 		comboBoxEditor = new MyComboBoxEditor(listToArray(genres));
-
-
+		
+		
 		TableColumn col = mainTable.getColumnModel().getColumn(2);
 		col.setCellEditor(comboBoxEditor);
 		col.setCellRenderer(comboBoxRenderer);
-
-
+		
+		
 		labels.get("titel_label").setText("Titel:");
 		labels.get("titel_label").setSize(70, 20);
 		labels.get("titel_label").setLocation(840, originY);
@@ -342,7 +377,7 @@ public class MainForm extends JFrame{
 		stringSearch.setSize(280,20);
 		stringSearch.setLocation(840, originY + 270);
 
-
+	
 		searchButton.setSize(100, 30);
 		searchButton.setLocation(1020, originY + 180);
 		searchButton.setText("Sök");
@@ -357,9 +392,9 @@ public class MainForm extends JFrame{
 		stringSearchButton.setLocation(1020, originY + 300);
 		stringSearchButton.setText("Sök");
 		stringSearchButton.addActionListener(new ActionListener(){
-
+			
 			public void actionPerformed(ActionEvent e){
-				// todo
+				// todo 
 				while(mainTableModel.getRowCount() > 0)
 					mainTableModel.removeRow(0);
 				List<Video> result = interpreter.interpretString(stringSearch.getText(), fileManager.getVideos(), "");
@@ -367,24 +402,24 @@ public class MainForm extends JFrame{
 					MetaData md = v.getMetaData();
 					mainTableModel.addRow(new Object[]{md.getName(), md.getDirector(), md.getGenre(), md.getYear(), md.getRating(), md.getPath().toAbsolutePath()});
 				}
-
+				
 				updateVideos();
 			}
 		});
-
+		
 		playButton.setSize(100, 30);
 		playButton.setLocation(1020, originY + 660);
 		playButton.setText("Spela");
 		playButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-
+	
 				if (mainTable.getSelectedRow() > -1){
 					startVLC(currentVideos.get(mainTable.getSelectedRow()).getPath().toAbsolutePath().toString());
 				}
 				//Dummycode
 			}
-		});    
-
+		});	
+		
 		exitButton.setSize(100, 30);
 		exitButton.setLocation(900, originY + 660);
 		exitButton.setText("Avsluta");
@@ -392,8 +427,8 @@ public class MainForm extends JFrame{
 			public void actionPerformed(ActionEvent e){
 				//Dummycode
 			}
-		});            
-
+		});		
+				
 		mainTableScroll.setEnabled(true);
 		mainTable.setEnabled(true);
 		mainTableScroll.setVisible(true);
@@ -403,24 +438,24 @@ public class MainForm extends JFrame{
 		for (JLabel l : labels.values()){
 			add(l);
 		}
-
+		
 		for (Video v : fileManager.getVideos()){
 			MetaData md = v.getMetaData();
 			mainTableModel.addRow(new Object[]{md.getName(), md.getDirector(), md.getGenre(), md.getYear(), md.getRating(), md.getPath().toAbsolutePath()});
 			currentVideos = fileManager.getVideos();
 		}
-
+		
 		this.addWindowListener(new WindowListener(){
 
 			@Override
 			public void windowActivated(WindowEvent arg0) {
-
+				
 			}
 
 			@Override
 			public void windowClosed(WindowEvent arg0) {
-
-
+		
+				
 			}
 
 			@Override
@@ -428,29 +463,29 @@ public class MainForm extends JFrame{
 				saveGenres();
 				updateVideos();
 				fileManager.saveAllMetaData();
-
+				
 			}
 
 			@Override
 			public void windowDeactivated(WindowEvent arg0) {
-
+				
 			}
 
 			@Override
 			public void windowDeiconified(WindowEvent arg0) {
-
+				
 			}
 
 			@Override
 			public void windowIconified(WindowEvent arg0) {
-
+				
 			}
 
 			@Override
 			public void windowOpened(WindowEvent arg0) {
-
+				
 			}
-
+			
 		});
 
 		add(titelSearch);
@@ -459,14 +494,19 @@ public class MainForm extends JFrame{
 		add(yearSearch);
 		add(ratingSearch);
 		add(searchButton);
+
 		add(stringSearch);
 		add(stringSearchButton);
 		add(playButton);
 		add(exitButton);
-
+		
 		this.setJMenuBar(menuBar);
 	}
-
+	
+	/**
+	 * Startar VLC och spelar upp vald film.
+	 * @param path Sökvägen till filmen som skall spelas.
+	 */
 	private void startVLC(String path){
 		try{
 			Runtime.getRuntime().exec("vlc " + path);
@@ -479,17 +519,17 @@ public class MainForm extends JFrame{
 		EventQueue.invokeLater(new Runnable(){
 			@Override
 			public void run(){
-
-				String path = FileChooser.fileChooser();
-				//String path = "L:/Osorterat";
-
+				
+				//String path = FileChooser.fileChooser();
+				String path = "L:/Osorterat";
+				
 				if (!path.equals("")){
 					MainForm main = new MainForm(path);
 					main.setVisible(true);
 				}
 			}
 		});
-
-
+		
+		
 	}
 }
