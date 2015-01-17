@@ -76,23 +76,23 @@ public class MetaData {
 	public void setYear(String year){
 		this.year = year;
 	}
-	
+
 	public boolean anyMatch(String term, String specificTerm){
-		if (specificTerm != ""){
-			if (specificTerm.equals("Title")){
-				return name.toLowerCase().contains(term);
-			} else if(specificTerm.equals("Genre")){
-				return genre.toLowerCase().contains(term);
-			} else if(specificTerm.equals("Director")){
-				return director.toLowerCase().contains(term);
-			} else if(specificTerm.equals("Year")){
-				return year.toLowerCase().contains(term);
-			} else if(specificTerm.equals("Rating")){
-				return rating.toLowerCase().contains(term);
-			}
-		}
-		return name.toLowerCase().contains(term) || genre.toLowerCase().contains(term) || director.toLowerCase().contains(term) || year.toLowerCase().contains(term) || rating.toLowerCase().contains(term);
-	}
+        if (specificTerm != ""){
+                if (specificTerm.equals("Title")){
+                        return name.toLowerCase().contains(term);
+                } else if(specificTerm.equals("Genre")){
+                        return genre != null ? genre.toLowerCase().contains(term) : false;
+                } else if(specificTerm.equals("Director")){
+                        return director != null ? director.toLowerCase().contains(term) : false;
+                } else if(specificTerm.equals("Year")){
+                        return year != null ? year.toLowerCase().contains(term) : false;
+                } else if(specificTerm.equals("Rating")){
+                        return rating != null ? rating.toLowerCase().contains(term) : false;
+                }
+        }
+        return name.toLowerCase().contains(term) || genre.toLowerCase().contains(term) || director.toLowerCase().contains(term) || year.toLowerCase().contains(term) || rating.toLowerCase().contains(term);
+}
 	
 	public void initiate(File f){
 		

@@ -1,6 +1,5 @@
 package VideoSorter;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
@@ -23,8 +22,6 @@ public class SearchStringInterpreter {
 	}
 	
 	private List<Video> evaluatePostfix(Stack<String> terms, List<Video> videos, String specificTerm){
-		
-		List<Video> result = new LinkedList<Video>();
 		
 		Stack<String> wait = new Stack<String>();
 		Stack<Stack<Video>> operandWait = new Stack<Stack<Video>>();

@@ -94,6 +94,8 @@ public class MainForm extends JFrame{
 			try{
 				BufferedWriter writer = new BufferedWriter(new FileWriter(genreList));
 				
+				writer.write("Ospecificerad");
+				writer.newLine();
 				writer.write("Action");
 				writer.newLine();
 				writer.write("Drama");
@@ -108,7 +110,7 @@ public class MainForm extends JFrame{
 				writer.newLine();
 				writer.write("Dokumentär");
 				writer.newLine();
-				writer.write("Serier");
+				writer.write("Serie");
 				writer.newLine();
 				
 				writer.close();
@@ -128,8 +130,20 @@ public class MainForm extends JFrame{
 				return;
 			}
 		}
-		
-		String[] dummy = genres;
+
+		File genreList = new File(Paths.get("genres.txt").toString());
+		BufferedWriter writer;
+		try {
+			writer = new BufferedWriter(new FileWriter(genreList));
+			writer.write("genre");
+			writer.newLine();
+			writer.close();
+			updateGenres();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+		}
+	
+		/*String[] dummy = genres;
 		this.genres = new String[genres.length + 1];
 		
 		for (int i = 0; i < dummy.length; i++){
@@ -138,6 +152,11 @@ public class MainForm extends JFrame{
 		
 		this.genres[genres.length - 1] = genre;
 		updateGenres();
+		*/
+	}
+	
+	private void eraseGenre(String genre){
+		
 	}
 	
 	private void updateGenres(){
@@ -145,47 +164,31 @@ public class MainForm extends JFrame{
 		this.comboBoxEditor = new MyComboBoxEditor(genres);
 	}
 	
-/*	private void removeGenre(String genre){
-		
-		int index = -1;
-		for (int i = 0; i < genres.length; i++){
-			if (genre.toLowerCase().equals(genres[i].toLowerCase())){
-				index = i;
-				break;
-			}
-		}
-		
-		if (index != -1){
-			String[] dummy = genres;
-			this.genres = new String[dummy.length - 1];
-			int subtract = 0;
-			for (int i = 0; i < dummy.length; i++){
-				if (i != index){
-					genres[i - subtract] = dummy[i];
-				} else{
-					subtract = -1;
-				}
-			}
-			
-			updateGenres();
-		}
-	}
-*/
 	private void updateVideos(){
 		for (Video v : fileManager.getVideos()){
 			MetaData md = v.getMetaData();
-			
+
 			for (int i = 0; i < mainTable.getRowCount(); i++){
 				if (md.getPath().toAbsolutePath().equals(mainTableModel.getValueAt(i, 5))){
-					md.setName(mainTableModel.getValueAt(i, 0).toString());
-					md.setDirector(mainTableModel.getValueAt(i, 1).toString());
-					md.setGenre(mainTableModel.getValueAt(i, 2).toString());
-					md.setYear(mainTableModel.getValueAt(i, 3).toString());
-					md.setRating(mainTableModel.getValueAt(i, 4).toString());
+					Object name = mainTableModel.getValueAt(i, 0);
+					if (name != null)
+						md.setName(name.toString());
+					Object director = mainTableModel.getValueAt(i, 1);
+					if (director != null)
+						md.setDirector(director.toString());
+					Object genre = mainTableModel.getValueAt(i, 2);
+					if (genre != null)
+						md.setGenre(genre.toString());
+					Object year = mainTableModel.getValueAt(i, 3);
+					if (year != null)
+						md.setYear(year.toString());
+					Object rating = mainTableModel.getValueAt(i, 4);
+					if (rating != null)
+						md.setRating(rating.toString());
 				}
 			}
-			
-			
+
+
 		}
 	}
 
@@ -407,8 +410,8 @@ public class MainForm extends JFrame{
 			@Override
 			public void run(){
 				
-				//String path = FileChooser.fileChooser();
-				String path = "D:";
+				String path = FileChooser.fileChooser();
+				//String path = "D:";
 				
 				if (!path.equals("")){
 					MainForm main = new MainForm(path);
