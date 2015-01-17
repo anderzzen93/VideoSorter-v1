@@ -519,10 +519,12 @@ public class MainForm extends JFrame{
 		EventQueue.invokeLater(new Runnable(){
 			@Override
 			public void run(){
+
+				String path = FileChooser.fileChooser();
 				
-				//String path = FileChooser.fileChooser();
-				String path = "L:/Osorterat";
-				
+				//Använd för att slippa välja directory vid många omstarter
+				//String path = "L:/Osorterat";
+
 				if (!path.equals("")){
 					MainForm main = new MainForm(path);
 					main.setVisible(true);
