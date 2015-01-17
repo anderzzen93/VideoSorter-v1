@@ -2,6 +2,7 @@ package VideoSorter;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.LinkedList;
 
@@ -44,5 +45,9 @@ public class FileManager {
 		
 		return new UnknownFormat(path);
 	}
-	
+	 public void saveAllMetaData(){
+         for (Video v : videos){
+                 v.getMetaData().initiate(Paths.get("metadata/" + v.name + ".mdata").toFile());
+         }
+ }
 }
