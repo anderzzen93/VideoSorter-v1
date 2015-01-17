@@ -91,7 +91,7 @@ public class MetaData {
                         return rating != null ? rating.toLowerCase().contains(term) : false;
                 }
         }
-        return name.toLowerCase().contains(term) || genre.toLowerCase().contains(term) || director.toLowerCase().contains(term) || year.toLowerCase().contains(term) || rating.toLowerCase().contains(term);
+        return name != null ? name.toLowerCase().contains(term) : false || genre != null ? genre.toLowerCase().contains(term) : false || director != null ? director.toLowerCase().contains(term) : false || year != null ? year.toLowerCase().contains(term) : false || rating != null ? rating.toLowerCase().contains(term) : false;
 }
 	
 	public void initiate(File f){

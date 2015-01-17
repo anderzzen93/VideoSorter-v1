@@ -157,6 +157,11 @@ public class MainForm extends JFrame{
 	
 	private void eraseGenre(String genre){
 		
+		for (int i = 0; i < genres.length; i++){
+			if (genre.toLowerCase().equals(genres[i].toLowerCase()));{
+				
+			}
+		}
 	}
 	
 	private void updateGenres(){
